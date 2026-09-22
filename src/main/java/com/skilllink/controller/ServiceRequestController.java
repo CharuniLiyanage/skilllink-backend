@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/service-requests")
@@ -186,5 +187,30 @@ public class ServiceRequestController {
                 requestRepository.save(request);
 
         return ResponseEntity.ok(updatedRequest);
+    }
+
+    @GetMapping("/provider/bookings")
+    public ResponseEntity<?> getProviderBookings(
+            @RequestParam String email
+    ) {
+        Optional<User> provider =
+                userRepository.findByEmail(email);
+
+        if (provider.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Provider not found");
+        }
+
+        List<ServiceRequest> bookings =
+                requestRepository.findByProviderEmail(email)
+                        .stream()
+                        .filter(request ->
+                                "ACCEPTED".equals(request.getStatus()) ||
+                                        "COMPLETED".equals(request.getStatus())
+                        )
+                        .toList();
+
+        return ResponseEntity.ok(bookings);
     }
 }
