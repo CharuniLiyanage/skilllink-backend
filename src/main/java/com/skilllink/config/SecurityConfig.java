@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/provider-profile/**").permitAll()
                         .requestMatchers("/api/services/**").permitAll()
                         .requestMatchers("/api/users/providers").permitAll()
+                        .requestMatchers("/api/service-requests/**").permitAll()
                         .requestMatchers("/error").permitAll()
 
                         .requestMatchers("/api/admin/**")
