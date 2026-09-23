@@ -109,4 +109,22 @@ public class ReviewController {
 
         return ResponseEntity.ok(savedReview);
     }
+
+    @GetMapping("/provider")
+    public ResponseEntity<?> getProviderReviews(
+            @RequestParam String email
+    ) {
+        Optional<User> optionalProvider =
+                userRepository.findByEmail(email);
+
+        if (optionalProvider.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Provider not found");
+        }
+
+        return ResponseEntity.ok(
+                reviewRepository.findByProviderEmail(email)
+        );
+    }
 }
