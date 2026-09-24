@@ -17,6 +17,10 @@ public class ProviderProfile {
     @Column(length = 1000)
     private String description;
 
+    // Profile picture path / URL
+    @Column(length = 500)
+    private String profileImage;
+
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
@@ -28,11 +32,13 @@ public class ProviderProfile {
             String location,
             Integer experience,
             String description,
+            String profileImage,
             User user
     ) {
         this.location = location;
         this.experience = experience;
         this.description = description;
+        this.profileImage = profileImage;
         this.user = user;
     }
 
@@ -66,6 +72,14 @@ public class ProviderProfile {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
     public User getUser() {
