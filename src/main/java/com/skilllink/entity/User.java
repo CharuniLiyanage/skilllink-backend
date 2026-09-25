@@ -24,6 +24,7 @@ public class User {
     private String password;
 
     private String phone;
+    private String profileImage;
 
     /*
      * This field is used only to receive the role
@@ -95,6 +96,14 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
     public Role getRole() {

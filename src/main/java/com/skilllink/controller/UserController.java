@@ -165,4 +165,66 @@ public class UserController {
 
         return ResponseEntity.ok(providers);
     }
+
+    // ================= GET USER BY EMAIL =================
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getUserProfile(
+            @RequestParam String email
+    ) {
+
+        Optional<User> optionalUser =
+                userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("User not found");
+        }
+
+        User user = optionalUser.get();
+
+        return ResponseEntity.ok(
+                java.util.Map.of(
+                        "id", user.getId(),
+                        "name", user.getName(),
+                        "email", user.getEmail(),
+                        "phone", user.getPhone()
+                )
+        );
+    }
+
+// ================= UPDATE USER PROFILE =================
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateUserProfile(
+            @RequestParam String email,
+            @RequestBody User updatedUser
+    ) {
+
+        Optional<User> optionalUser =
+                userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("User not found");
+        }
+
+        User user = optionalUser.get();
+
+        user.setName(updatedUser.getName());
+        user.setPhone(updatedUser.getPhone());
+
+        User savedUser = userRepository.save(user);
+
+        return ResponseEntity.ok(
+                java.util.Map.of(
+                        "id", savedUser.getId(),
+                        "name", savedUser.getName(),
+                        "email", savedUser.getEmail(),
+                        "phone", savedUser.getPhone()
+                )
+        );
+    }
 }

@@ -43,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/service-requests/**").permitAll()
                         .requestMatchers("/api/reviews/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/api/users/profile").permitAll()
+                        .requestMatchers("/api/customer-profile/upload-image").permitAll()
                         .requestMatchers("/error").permitAll()
 
                         .requestMatchers("/api/admin/**")
