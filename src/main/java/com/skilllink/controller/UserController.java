@@ -5,11 +5,14 @@ import com.skilllink.entity.UserRole;
 import com.skilllink.enums.Role;
 import com.skilllink.repository.UserRepository;
 import com.skilllink.service.JwtService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
+import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 
@@ -227,6 +230,80 @@ public class UserController {
                         "name", savedUser.getName(),
                         "email", savedUser.getEmail(),
                         "phone", savedUser.getPhone()
+                )
+        );
+    }
+
+    // ================= CHANGE PASSWORD =================
+
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+            Authentication authentication,
+            @RequestBody Map<String, String> request
+    ) {
+
+        String email = authentication.getName();
+
+        Optional<User> optionalUser =
+                userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("User not found");
+        }
+
+        User user = optionalUser.get();
+
+        String currentPassword = request.get("currentPassword");
+        String newPassword = request.get("newPassword");
+
+        if (currentPassword == null || currentPassword.isBlank()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Current password is required");
+        }
+
+        if (newPassword == null || newPassword.isBlank()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("New password is required");
+        }
+
+        if (newPassword.length() < 6) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("New password must be at least 6 characters");
+        }
+
+        if (!passwordEncoder.matches(
+                currentPassword,
+                user.getPassword()
+        )) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Current password is incorrect");
+        }
+
+        if (passwordEncoder.matches(
+                newPassword,
+                user.getPassword()
+        )) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("New password must be different from current password");
+        }
+
+        user.setPassword(
+                passwordEncoder.encode(newPassword)
+        );
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "message",
+                        "Password changed successfully"
                 )
         );
     }
