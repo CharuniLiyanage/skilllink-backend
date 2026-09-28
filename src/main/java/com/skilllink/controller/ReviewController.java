@@ -127,4 +127,19 @@ public class ReviewController {
                 reviewRepository.findByProviderEmail(email)
         );
     }
+
+    @GetMapping("/check")
+    public ResponseEntity<?> checkReview(
+            @RequestParam Long serviceRequestId
+    ) {
+
+        Optional<Review> existingReview =
+                reviewRepository.findByServiceRequestId(
+                        serviceRequestId
+                );
+
+        return ResponseEntity.ok(
+                existingReview.isPresent()
+        );
+    }
 }
